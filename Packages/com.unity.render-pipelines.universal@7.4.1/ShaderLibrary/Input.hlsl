@@ -22,6 +22,11 @@ struct InputData
     half    fogCoord;
     half3   vertexLighting;
     half3   bakedGI;
+    /* Shadowmask implementation start */
+#if defined(SHADOWS_SHADOWMASK) && defined(LIGHTMAP_ON)
+    half4   bakedAttenuation;
+#endif
+    /* Shadowmask implementation end */
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -70,6 +70,11 @@ void InitializeInputData(Varyings input, half3 normalTS, out InputData inputData
     inputData.fogCoord = input.fogFactorAndVertexLight.x;
     inputData.vertexLighting = input.fogFactorAndVertexLight.yzw;
     inputData.bakedGI = SAMPLE_GI(input.lightmapUV, input.vertexSH, inputData.normalWS);
+    /* Shadowmask implementation start */
+#if defined(SHADOWS_SHADOWMASK) && defined(LIGHTMAP_ON)
+    inputData.bakedAttenuation = SAMPLE_TEXTURE2D(unity_ShadowMask, samplerunity_ShadowMask, input.lightmapUV);
+#endif
+    /* Shadowmask implementation start */
 }
 
 ///////////////////////////////////////////////////////////////////////////////

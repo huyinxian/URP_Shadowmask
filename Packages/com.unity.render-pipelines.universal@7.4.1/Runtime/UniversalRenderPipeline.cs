@@ -463,7 +463,11 @@ namespace UnityEngine.Rendering.Universal
             {
                 reflectionProbeModes = SupportedRenderingFeatures.ReflectionProbeModes.None,
                 defaultMixedLightingModes = SupportedRenderingFeatures.LightmapMixedBakeModes.Subtractive,
-                mixedLightingModes = SupportedRenderingFeatures.LightmapMixedBakeModes.Subtractive | SupportedRenderingFeatures.LightmapMixedBakeModes.IndirectOnly,
+                /* Shadowmask implementation start */
+                mixedLightingModes = SupportedRenderingFeatures.LightmapMixedBakeModes.Subtractive |
+                                     SupportedRenderingFeatures.LightmapMixedBakeModes.IndirectOnly |
+                                     SupportedRenderingFeatures.LightmapMixedBakeModes.Shadowmask,
+                /* Shadowmask implementation end */
                 lightmapBakeTypes = LightmapBakeType.Baked | LightmapBakeType.Mixed,
                 lightmapsModes = LightmapsMode.CombinedDirectional | LightmapsMode.NonDirectional,
                 lightProbeProxyVolumes = false,
@@ -862,7 +866,10 @@ namespace UnityEngine.Rendering.Universal
 
         static PerObjectData GetPerObjectLightFlags(int additionalLightsCount)
         {
-            var configuration = PerObjectData.ReflectionProbes | PerObjectData.Lightmaps | PerObjectData.LightProbe | PerObjectData.LightData | PerObjectData.OcclusionProbe;
+            /* Shadowmask implementation start */
+            var configuration = PerObjectData.ReflectionProbes | PerObjectData.Lightmaps | PerObjectData.LightProbe |
+                                PerObjectData.LightData | PerObjectData.OcclusionProbe | PerObjectData.ShadowMask;
+            /* Shadowmask implementation end */
 
             if (additionalLightsCount > 0)
             {

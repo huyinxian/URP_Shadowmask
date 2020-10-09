@@ -88,9 +88,15 @@ namespace UnityEngine.Rendering.Universal.Internal
                 additionalLightsCount > 0 && additionalLightsPerVertex);
             CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.AdditionalLightsPixel,
                 additionalLightsCount > 0 && !additionalLightsPerVertex);
+            /* Shadowmask implementation start */
             CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.MixedLightingSubtractive,
                 renderingData.lightData.supportsMixedLighting &&
-                m_MixedLightingSetup == MixedLightingSetup.Subtractive);
+                (m_MixedLightingSetup == MixedLightingSetup.Subtractive ||
+                 m_MixedLightingSetup == MixedLightingSetup.ShadowMask));
+            CoreUtils.SetKeyword(cmd, ShaderKeywordStrings.MixedLightingShadowmask,
+                renderingData.lightData.supportsMixedLighting &&
+                m_MixedLightingSetup == MixedLightingSetup.ShadowMask);
+            /* Shadowmask implementation end */
             context.ExecuteCommandBuffer(cmd);
             CommandBufferPool.Release(cmd);
         }
@@ -191,7 +197,6 @@ namespace UnityEngine.Rendering.Universal.Internal
             lightOcclusionProbeChannel.x = occlusionProbeChannel == -1 ? 0f : occlusionProbeChannel;
             lightOcclusionProbeChannel.y = occlusionProbeChannel == -1 ? 1f : 0f;
 
-            // TODO: Add support to shadow mask
             if (light != null && light.bakingOutput.mixedLightingMode == MixedLightingMode.Subtractive && light.bakingOutput.lightmapBakeType == LightmapBakeType.Mixed)
             {
                 if (m_MixedLightingSetup == MixedLightingSetup.None && lightData.light.shadows != LightShadows.None)
@@ -199,6 +204,19 @@ namespace UnityEngine.Rendering.Universal.Internal
                     m_MixedLightingSetup = MixedLightingSetup.Subtractive;
                 }
             }
+            
+            /* Shadowmask implementation start */
+            if (light != null && light.bakingOutput.mixedLightingMode == MixedLightingMode.Shadowmask && light.bakingOutput.lightmapBakeType == LightmapBakeType.Mixed)
+            {
+                if (lightData.light.shadows != LightShadows.None)
+                {
+                    m_MixedLightingSetup = MixedLightingSetup.ShadowMask;
+                }
+
+                int channel = light.bakingOutput.occlusionMaskChannel;
+                lightSpotDir.w = channel + 1;
+            }
+            /* Shadowmask implementation end */
         }
 
         void SetupShaderLightConstants(CommandBuffer cmd, ref RenderingData renderingData)

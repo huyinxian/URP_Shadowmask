@@ -104,6 +104,9 @@ Shader "Universal Render Pipeline/Lit"
             #pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
             #pragma multi_compile _ _SHADOWS_SOFT
             #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
+            /* Shadowmask implementation start */
+            #pragma multi_compile _ SHADOWS_SHADOWMASK
+            /* Shadowmask implementation end */
 
             // -------------------------------------
             // Unity defined keywords

@@ -210,6 +210,9 @@ TEXTURE2D(unity_LightmapInd);
 
 // We can have shadowMask only if we have lightmap, so no sampler
 TEXTURE2D(unity_ShadowMask);
+/* Shadowmask implementation start */
+SAMPLER(samplerunity_ShadowMask);
+/* Shadowmask implementation end */
 
 // ----------------------------------------------------------------------------
 

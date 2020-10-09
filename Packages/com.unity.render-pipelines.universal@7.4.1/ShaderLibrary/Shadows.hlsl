@@ -318,4 +318,25 @@ real SampleShadowmap(float4 shadowCoord, TEXTURE2D_SHADOW_PARAM(ShadowMap, sampl
     return SampleShadowmap(TEXTURE2D_SHADOW_ARGS(ShadowMap, sampler_ShadowMap), shadowCoord, samplingData, shadowParams, isPerspectiveProjection);
 }
 
+/* Shadowmask implementation start */
+half AdditionalLightBakedShadow(int lightIndex, half4 shadowmask)
+{
+#if defined(SHADOWS_SHADOWMASK) && defined(LIGHTMAP_ON)
+    int channel = _AdditionalLightsSpotDir[lightIndex].w;
+    if (channel >= 1 && channel <= 4)
+    {
+        half bakedShadow = shadowmask[channel - 1];
+        bakedShadow = LerpWhiteTo(bakedShadow, GetAdditionalLightShadowStrenth(lightIndex));
+        return bakedShadow;
+    }
+    else
+    {
+        return 1.0;
+    }
+#endif
+
+    return 1.0;
+}
+/* Shadowmask implementation end */
+
 #endif
